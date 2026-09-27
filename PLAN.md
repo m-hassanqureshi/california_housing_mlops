@@ -1,7 +1,7 @@
-# Assignment 01: Git-Based Collaboration for an ML Project
+# California Housing MLOps Pipeline: Git-Based Collaboration Master Plan
 
-> **Complete Master Execution Plan, Work Allocation, and Technical Blueprint**  
-> **Repository:** [`nyc_mobility_ml`](https://github.com/m-hassanqureshi/nyc_mobility_ml) | **Benchmark:** California Housing Dataset | **Engine:** Scikit-Learn & LightGBM
+> **Assignment 01: Complete Master Execution Plan, Work Allocation, and Technical Blueprint**  
+> **Repository:** [`nyc_mobility_ml`](https://github.com/m-hassanqureshi/nyc_mobility_ml) | **Benchmark:** California Housing Dataset (~2.8 MB, 20,640 rows) | **Engine:** Scikit-Learn & LightGBM Regressor
 
 ---
 
@@ -134,10 +134,15 @@ flowchart TD
 
 To ensure continuous integration stability, rapid local iteration, and sub-minute smoke training runs, we select the **California Housing** dataset (derived from the 1990 U.S. Census).
 
+> [!NOTE]
+> **Dataset Selection Rationale:** Per the assignment guidelines, datasets must be small tabular benchmarks (under ~50 MB) so pipelines and CI stay fast. While large-scale datasets (such as multi-gigabyte NYC TLC Trip Record taxi partitions) represent real-world enterprise workloads, running them inside standard GitHub Actions runners (which provide only 7 GB of RAM and standard execution timeouts) leads to Out-Of-Memory (OOM) crashes and 30+ minute PR check delays. Furthermore, repeated `dvc pull` and `dvc repro` on multi-gigabyte files introduces severe bandwidth friction for teammates. The **California Housing** benchmark provides an ideal ~2.8 MB tabular regression challenge that runs end-to-end in < 60 seconds while exercising full DVC data tracking, parameter versioning, and deterministic ML pipelines.
+
 - **Task:** Continuous Regression (Median House Value Prediction).
 - **Target Feature:** `MedHouseVal` (continuous, measured in hundreds of thousands of dollars: $\$100{,}000$ to $\$500{,}000$).
 - **Volume:** $20{,}640$ records, 8 numeric features, 1 target variable ($\sim 2.8\text{ MB}$ in CSV format).
 - **Source Attribution:** Derived from the StatLib repository and packaged cleanly via `sklearn.datasets.fetch_california_housing`.
+- **Model Architecture:** LightGBM Regressor (`LGBMRegressor`) with Scikit-Learn evaluation pipelines predicting continuous housing prices (`MedHouseVal`).
+- **Data Paths:** Standardized to `data/raw/california_housing.csv` (versioned via DVC pointer `california_housing.csv.dvc`) and `data/processed/*.parquet` (`train.parquet`, `test.parquet`).
 
 ### Feature Dictionary
 
@@ -279,7 +284,7 @@ gantt
 #### Step 1.1: GitHub Repository Initialization & Access Control
 - **Owner:** Hassan
 - **Actions:**
-  1. Access GitHub and create a completely blank repository named `california-housing-mlops` (or target repo `nyc_mobility_ml`).
+  1. Access GitHub and utilize repository [`nyc_mobility_ml`](https://github.com/m-hassanqureshi/nyc_mobility_ml).
   2. Navigate to **Settings > Collaborators and teams** and invite Ahmad and Moeed with explicit **Admin / Write** access.
   3. Invite the course instructor as a **Viewer / Read-only** collaborator.
   4. Ensure no initial commits (no auto-generated README, no `.gitignore`) are injected by GitHub during initialization to avoid rebase anomalies.
@@ -1599,7 +1604,7 @@ The production model tagged at `model-v1.0` is permanently locked against the fo
 Follow this sequential 23-point operational checklist to execute the project end-to-end:
 
 ### Phase 1 & 2: Project Setup and Code Modularization
-- [ ] **1. (Hassan)** Initialize empty GitHub repository `california-housing-mlops` / `nyc_mobility_ml`, invite Ahmad, Moeed, and instructor, then clone locally.
+- [ ] **1. (Hassan)** Initialize and configure GitHub repository [`nyc_mobility_ml`](https://github.com/m-hassanqureshi/nyc_mobility_ml), invite Ahmad, Moeed, and instructor, then clone locally.
 - [ ] **2. (Hassan)** Create standardized directory hierarchy, configure `.gitignore`, and add initial `src/prepare.py`, `src/train.py`, and `src/evaluate.py`.
 - [ ] **3. (Ahmad)** Initialize deterministic environment via `uv`, add pinned production dependencies, and generate `uv.lock`.
 - [ ] **4. (Hassan)** Commit baseline files to `main`, spin off `staging` and `dev` branches, push to remote, and establish branch protection rules on GitHub.
