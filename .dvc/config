@@ -1,0 +1,4 @@
+[core]
+    remote = storage
+['remote "storage"']
+    url = https://dagshub.com/m-hassanqureshi/california_housing_mlops.dvc
