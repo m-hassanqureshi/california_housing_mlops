@@ -1,7 +1,7 @@
 [project]
 name = "california-housing-mlops"
 version = "0.1.0"
-description = "Add your description here"
+description = "Reproducible MLOps pipeline for California Housing price prediction with Git, DVC, uv and GitHub Actions"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -23,3 +23,19 @@ dev = [
     "pytest>=9.1.1",
     "ruff>=0.16.9",
 ]
+
+[tool.ruff]
+# Leftover cookiecutter scaffold, kept until the team decides to delete it
+extend-exclude = [
+    "docs",
+    "setup.py",
+    "test_environment.py",
+    "src/data",
+    "src/features",
+    "src/models",
+    "src/visualization",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
