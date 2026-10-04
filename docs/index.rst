@@ -1,9 +1,9 @@
-.. nyc_mobility_ml documentation master file, created by
+.. california_housing_mlops documentation master file, created by
    sphinx-quickstart.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-nyc_mobility_ml documentation!
+california_housing_mlops documentation!
 ==============================================
 
 Contents:
