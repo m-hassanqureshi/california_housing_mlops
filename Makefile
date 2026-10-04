@@ -7,7 +7,7 @@
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
 PROFILE = default
-PROJECT_NAME = nyc_mobility_ml
+PROJECT_NAME = california_housing_mlops
 PYTHON_INTERPRETER = python3
 
 ifeq (,$(shell which conda))
