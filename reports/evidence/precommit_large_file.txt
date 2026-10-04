@@ -1,0 +1,20 @@
+$ git add tests/large_blob.bin  # 5 MB random binary
+$ git commit -m "test: simulate payload leak"
+check for added large files..............................................Failed
+- hook id: check-added-large-files
+- exit code: 1
+
+tests/large_blob.bin (5120 KB) exceeds 1024 KB.
+
+detect private key.......................................................Passed
+check for case conflicts.................................................Passed
+check for merge conflicts................................................Passed
+check yaml...............................................................Passed
+fix end of files.........................................................Passed
+trim trailing whitespace.................................................Passed
+Detect hardcoded secrets.................................................Passed
+nbstripout...........................................(no files to check)Skipped
+ruff check...............................................................Passed
+ruff format..............................................................Passed
+jupytext sync (ipynb <-> py:percent).................(no files to check)Skipped
+exit code: 1
