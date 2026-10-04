@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [dev, staging, main]
+  push:
+    branches: [dev, staging, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write # lets CML post the metrics comment
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # This job name is the required status check in branch protection.
+  quality-and-smoke-train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # needed for `dvc metrics diff` against the base branch
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Install locked environment
+        run: |
+          uv sync --locked   # fails if uv.lock is out of date with pyproject.toml
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+
+      - name: Lint and format (ruff)
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Pre-commit file checks
+        run: >-
+          SKIP=ruff,ruff-format,jupytext-sync
+          pre-commit run --all-files --show-diff-on-failure
+
+      - name: Unit tests
+        run: pytest
+
+      - name: Check for a DVC pipeline
+        id: pipeline
+        run: |
+          if grep -qE '^stages:' dvc.yaml 2>/dev/null; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::dvc.yaml has no stages on this branch; skipping the pipeline run."
+          fi
+
+      # DagsHub needs a token even for reads. Add DAGSHUB_USER and DAGSHUB_TOKEN
+      # under Settings > Secrets and variables > Actions.
+      - name: Pull raw data from DVC remote
+        if: steps.pipeline.outputs.present == 'true'
+        env:
+          DAGSHUB_USER: ${{ secrets.DAGSHUB_USER }}
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: |
+          if [ -z "$DAGSHUB_USER" ] || [ -z "$DAGSHUB_TOKEN" ]; then
+            echo "::error::DAGSHUB_USER / DAGSHUB_TOKEN repository secrets are not set."
+            exit 1
+          fi
+          dvc remote modify storage --local auth basic
+          dvc remote modify storage --local user "$DAGSHUB_USER"
+          dvc remote modify storage --local password "$DAGSHUB_TOKEN"
+          # Only the raw input: everything downstream is rebuilt by `dvc repro`,
+          # which is the reproducibility check itself.
+          dvc pull data/raw/california_housing.csv.dvc
+
+      - name: Reproduce pipeline
+        if: steps.pipeline.outputs.present == 'true'
+        run: |
+          dvc repro
+          dvc metrics show
+
+      - name: Install CML
+        if: steps.pipeline.outputs.present == 'true' && github.event_name == 'pull_request'
+        uses: iterative/setup-cml@v2.1.0
+
+      - name: Post metrics comment
+        if: steps.pipeline.outputs.present == 'true' && github.event_name == 'pull_request'
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          {
+            echo "## Pipeline metrics"
+            echo
+            echo "Reproduced with \`dvc repro\` on ${GITHUB_SHA::7}, compared with \`$BASE_REF\`:"
+            echo
+            dvc metrics diff "origin/$BASE_REF" --md --precision 4 || dvc metrics show --md
+            echo
+            echo "<details><summary>Changed params</summary>"
+            echo
+            dvc params diff "origin/$BASE_REF" --md || true
+            echo
+            echo "</details>"
+          } > report.md
+          cml comment update report.md
