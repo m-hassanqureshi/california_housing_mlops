@@ -2,6 +2,7 @@
 
 > **Assignment 01: Git-Based Collaboration for an ML Project**  
 > **Repository:** [`california_housing_mlops`](https://github.com/m-hassanqureshi/california_housing_mlops) | **Benchmark:** California Housing (~2.8 MB) | **Target:** `MedHouseVal`
+> **Repository:** [`nyc_mobility_ml`](https://github.com/m-hassanqureshi/nyc_mobility_ml) | **Benchmark:** California Housing (~2.8 MB) | **Target:** `MedHouseVal`
 
 ---
 
