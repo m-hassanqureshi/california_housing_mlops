@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 """Produce an outlier-removed version of the California Housing dataset.
 
 Demonstrates DVC data version switching (PLAN.md checklist item 14).
 Rows whose target (MedHouseVal) falls outside the 1.5 x IQR fence are dropped.
 """
+
 import logging
 from pathlib import Path
 
@@ -30,7 +30,9 @@ def remove_outliers(path: Path = RAW_PATH, factor: float = 1.5) -> Path:
     iqr = q3 - q1
     low, high = q1 - factor * iqr, q3 + factor * iqr
 
-    frame = frame[(frame[TARGET] >= low) & (frame[TARGET] <= high)].reset_index(drop=True)
+    frame = frame[(frame[TARGET] >= low) & (frame[TARGET] <= high)].reset_index(
+        drop=True
+    )
     frame.to_csv(path, index=False)
 
     logger.info(
