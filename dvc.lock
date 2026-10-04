@@ -1,7 +1,7 @@
 schema: '2.0'
 stages:
   prepare:
-    cmd: python src/prepare.py --config configs/params.yaml
+    cmd: python src/prepare.py --config params.yaml
     deps:
     - path: data/raw/california_housing.csv
       hash: md5
@@ -25,7 +25,7 @@ stages:
       md5: b509d2b3ad7c59a77a53cd09e7a80f5c
       size: 940037
   train:
-    cmd: python src/train.py --config configs/params.yaml
+    cmd: python src/train.py --config params.yaml
     deps:
     - path: data/processed/train.parquet
       hash: md5
@@ -38,17 +38,19 @@ stages:
     params:
       params.yaml:
         base.seed: 42
-        train.learning_rate: 0.05
+        train.colsample_bytree: 0.8
+        train.learning_rate: 0.01
         train.max_depth: 6
         train.n_estimators: 250
         train.num_leaves: 31
+        train.subsample: 0.5
     outs:
     - path: models/model.pkl
       hash: md5
-      md5: acaad7535b3a302baac439dbc88fee21
-      size: 708316
+      md5: 397a2f1a6f9b9f5257e213dc63c92584
+      size: 733580
   evaluate:
-    cmd: python src/evaluate.py --config configs/params.yaml
+    cmd: python src/evaluate.py --config params.yaml
     deps:
     - path: data/processed/test.parquet
       hash: md5
@@ -56,8 +58,8 @@ stages:
       size: 261684
     - path: models/model.pkl
       hash: md5
-      md5: acaad7535b3a302baac439dbc88fee21
-      size: 708316
+      md5: 397a2f1a6f9b9f5257e213dc63c92584
+      size: 733580
     - path: src/evaluate.py
       hash: md5
       md5: 66a534e0861d79a8906e9ce16103ecf1
@@ -65,5 +67,5 @@ stages:
     outs:
     - path: metrics/eval.json
       hash: md5
-      md5: e6f437cb762a4b146a14a54a884e0477
-      size: 167
+      md5: 0b49b5cdf131ffe8595f6413cd17b061
+      size: 166

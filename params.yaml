@@ -1,22 +1,22 @@
 base:
   seed: 42
-  project_name: "california-housing-mlops"
+  project_name: california-housing-mlops
 
 split:
   test_size: 0.20
-  stratify: null
+  stratify:
 
 features:
   engineer_ratios: true
 
 train:
-  model_type: "lightgbm"
+  model_type: lightgbm
   n_estimators: 250
-  learning_rate: 0.05
+  learning_rate: 0.01
   max_depth: 6
   num_leaves: 31
-  subsample: 0.8
+  subsample: 0.5
   colsample_bytree: 0.8
 
 evaluate:
-  output_metric_file: "metrics/eval.json"
+  output_metric_file: metrics/eval.json

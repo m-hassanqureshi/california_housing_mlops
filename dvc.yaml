@@ -1,6 +1,6 @@
 stages:
   prepare:
-    cmd: python src/prepare.py --config configs/params.yaml
+    cmd: python src/prepare.py --config params.yaml
     deps:
       - src/prepare.py
       - data/raw/california_housing.csv
@@ -12,21 +12,23 @@ stages:
       - data/processed/test.parquet
 
   train:
-    cmd: python src/train.py --config configs/params.yaml
+    cmd: python src/train.py --config params.yaml
     deps:
       - src/train.py
       - data/processed/train.parquet
     params:
       - base.seed
+      - train.colsample_bytree
       - train.learning_rate
       - train.max_depth
       - train.n_estimators
       - train.num_leaves
+      - train.subsample
     outs:
       - models/model.pkl
 
   evaluate:
-    cmd: python src/evaluate.py --config configs/params.yaml
+    cmd: python src/evaluate.py --config params.yaml
     deps:
       - src/evaluate.py
       - data/processed/test.parquet
