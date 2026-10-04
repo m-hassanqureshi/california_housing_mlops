@@ -75,8 +75,8 @@ target/
 # Jupyter NB Checkpoints
 .ipynb_checkpoints/
 
-# exclude data from source control by default
-/data/
+# data files are versioned by DVC; each data dir keeps its own .gitignore
+# (pointers such as data/raw/california_housing.csv.dvc stay tracked)
 
 # Mac OS-specific storage files
 .DS_Store
