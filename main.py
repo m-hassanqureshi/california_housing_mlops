@@ -1,5 +1,5 @@
 def main():
-    print("Hello from nyc-taxi-mlops-project!")
+    print("Hello from california-housing-mlops!")
 
 
 if __name__ == "__main__":
