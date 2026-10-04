@@ -1,7 +1,6 @@
 # California Housing MLOps Pipeline: Master Execution Plan
 
 > **Assignment 01: Git-Based Collaboration for an ML Project**  
-> **Repository:** [`california_housing_mlops`](https://github.com/m-hassanqureshi/california_housing_mlops) | **Benchmark:** California Housing (~2.8 MB) | **Target:** `MedHouseVal`
 > **Repository:** [`nyc_mobility_ml`](https://github.com/m-hassanqureshi/nyc_mobility_ml) | **Benchmark:** California Housing (~2.8 MB) | **Target:** `MedHouseVal`
 
 ---
@@ -83,8 +82,8 @@ flowchart TD
 * **Lead:** Hassan | **Reviewers:** Ahmad, Moeed
 * **Goal:** Initialize GitHub repo, invite collaborators, and standardize local git config.
 ```bash
-git clone https://github.com/m-hassanqureshi/california_housing_mlops.git
-cd california_housing_mlops
+git clone https://github.com/m-hassanqureshi/nyc_mobility_ml.git
+cd nyc_mobility_ml
 git config user.name "Your Name"
 git config user.email "your_email@domain.com"
 git config pull.rebase true
