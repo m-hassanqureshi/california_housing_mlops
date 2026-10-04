@@ -1,0 +1,36 @@
+stages:
+  prepare:
+    cmd: python src/prepare.py --config configs/params.yaml
+    deps:
+      - src/prepare.py
+      - data/raw/california_housing.csv
+    params:
+      - base.seed
+      - split.test_size
+    outs:
+      - data/processed/train.parquet
+      - data/processed/test.parquet
+
+  train:
+    cmd: python src/train.py --config configs/params.yaml
+    deps:
+      - src/train.py
+      - data/processed/train.parquet
+    params:
+      - base.seed
+      - train.learning_rate
+      - train.max_depth
+      - train.n_estimators
+      - train.num_leaves
+    outs:
+      - models/model.pkl
+
+  evaluate:
+    cmd: python src/evaluate.py --config configs/params.yaml
+    deps:
+      - src/evaluate.py
+      - data/processed/test.parquet
+      - models/model.pkl
+    metrics:
+      - metrics/eval.json:
+          cache: false
