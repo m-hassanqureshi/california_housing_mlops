@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 """Download the raw California Housing dataset into data/raw as a CSV.
 
 Deliverable for Hassan's Data Owner work (PLAN.md Phase 4).
 Target column: MedHouseVal.
 """
+
 import logging
 from pathlib import Path
 
@@ -25,7 +25,9 @@ def main(output_path: Path = RAW_PATH) -> Path:
     frame = fetch_california_housing(as_frame=True).frame
     output_path.parent.mkdir(parents=True, exist_ok=True)
     frame.to_csv(output_path, index=False)
-    logger.info("Wrote %d rows x %d cols to %s", frame.shape[0], frame.shape[1], output_path)
+    logger.info(
+        "Wrote %d rows x %d cols to %s", frame.shape[0], frame.shape[1], output_path
+    )
     return output_path
 
 
